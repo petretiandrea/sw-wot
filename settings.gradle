@@ -1,0 +1,4 @@
+rootProject.name = 'sw-wot'
+
+include "semantic-directory"
+include "discovery-agent"

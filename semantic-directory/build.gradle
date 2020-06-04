@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.apache.jena:apache-jena-libs:3.14.0"
+    implementation "org.json:json:20190722"
+    implementation "io.vertx:vertx-lang-kotlin:3.9.1"
+    implementation "io.vertx:vertx-web:3.9.1"
+    implementation "com.github.galigator.openllet:openllet-jena:2.6.5"
+    implementation "com.github.everit-org.json-schema:org.everit.json.schema:1.12.1"
+}
