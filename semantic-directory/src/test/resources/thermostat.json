@@ -1,0 +1,53 @@
+{
+  "@context": ["https://www.w3.org/2019/wot/td/v1",
+    {
+      "ssn": "https://www.w3.org/ns/ssn/",
+      "sosa": "http://www.w3.org/ns/sosa/",
+      "my":  "http://www.sw.org/andreapetreti/home-wot#"
+    }],
+  "@type" : "my:Thermostat",
+  "title": "ThermostatB",
+  "id": "urn:thing:Thermostat_b",
+  "name": "ThermostatB",
+  "security": ["none"],
+  "securityDefinitions": {
+    "none": {
+      "scheme" : "nosec"
+    }
+  },
+  "properties": {
+    "roomTemperature": {
+      "sosa:observes" : {"@id": "my:Ambient_Temperature"},
+      "description" : "The current room temperature",
+      "writable": false,
+      "observable": false,
+      "type": "string",
+      "forms": [{
+        "href": "coaps://mylamp.example.com/status",
+        "mediaType": "application/json"
+      }]
+    },
+    "location": {
+      "sosa:observes": { "@id":  "my:GPSLocation" },
+      "description": "The csss",
+      "writable": false,
+      "observable": false,
+      "type" : "string",
+      "forms": [{
+        "href": "coaps://mylamp.example.com/status",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "actions": {
+    "changeRoomTemperature" : {
+      "my:actsOn": { "@id": "my:Ambient_Temperature"},
+      "description": "Ciaoo",
+      "forms": [{
+        "href": "coaps://mylamp.example.com/status",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "events": {}
+}

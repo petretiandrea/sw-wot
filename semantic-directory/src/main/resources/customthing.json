@@ -1,7 +1,7 @@
 {
   "@context": ["https://www.w3.org/2019/wot/td/v1",
-    {"my": "http://www.semanticweb.org/andreapetreti/ontologies/2020/5/untitled-ontology-59#"}],
-  "@type" : "my:HomeThing",
+    {"ssn": "https://www.w3.org/ns/ssn#", "sosa": "http://www.w3.org/ns/sosa#", "my":  "http://www.sw.org/andreapetreti/home-wot#"}],
+  "@type" : "my:Thermometer",
   "title": "LampBella",
   "id": "urn:dev:wot:com:example:servient:lamp",
   "name": "MyLampThing",
@@ -14,7 +14,7 @@
   },
   "properties": {
     "status": {
-      "@type" : "my:Location",
+      "sosa:observes" : { "@type": "my:Temperature" },
       "description" : "Shows the current status of the lamp",
       "writable": false,
       "observable": false,
@@ -27,21 +27,9 @@
   },
   "actions": {
     "toggle": {
-      "@type" : "iot:SwitchStatus",
       "description" : "Turn on or off the lamp",
       "forms": [{
         "href": "coaps://mylamp.example.com/toggle",
-        "mediaType": "application/json"
-      }]
-    }
-  },
-  "events": {
-    "overheating": {
-      "@type" : "iot:TemperatureAlarm",
-      "description" : "Lamp reaches a critical temperature (overheating)",
-      "type": "string",
-      "forms": [{
-        "href": "coaps://mylamp.example.com/oh",
         "mediaType": "application/json"
       }]
     }

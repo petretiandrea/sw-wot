@@ -5,11 +5,14 @@ import org.apache.jena.query.ReadWrite
 
 
 fun <T> Dataset.doTransaction(operation: ReadWrite, map: (Dataset) -> T) : T? {
-    try {
+    return try {
         this.begin(operation)
         val mapped = map(this)
         this.commit()
-        return mapped
+        mapped
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     } finally {
         this.end()
     }

@@ -1,6 +1,6 @@
 package it.petretiandrea.sw.parsing
 
-import it.petretiandrea.sw.Namespaces
+import it.petretiandrea.sw.ontology.Namespaces
 import it.petretiandrea.sw.parsing.jsonld.JSONLDParser
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
@@ -19,8 +19,8 @@ class TDParserImpl(private val validator: TDValidator,
             true -> {
                 val model = ModelFactory.createDefaultModel()
                 val lifted = lifter.lift(thingDescription)
-                val nQuads = jsonLdParser.toNQuads(lifted, Namespaces.SEMANTIC_DISCOVERY)
-                model.read(nQuads.reader(), Namespaces.SEMANTIC_DISCOVERY.toString(), TARGET_TYPE)
+                val nQuads = jsonLdParser.toNQuads(lifted, Namespaces.HOME_SEMANTIC)
+                model.read(nQuads.reader(), Namespaces.HOME_SEMANTIC.toString(), TARGET_TYPE)
             }
             else -> null
         }
