@@ -15,8 +15,8 @@ object HomeOnto {
         val homeOnto = loadModel(File(HOME_ONTO_PATH!!).reader())
         return ModelFactory.createDefaultModel().apply {
             read(wotOntologyReader(), Namespaces.WOT.toString(), "TURTLE")
-            read(Namespaces.SSN.toString())
-            read(Namespaces.SOSA.toString())
+            //read(Namespaces.SSN.toString())
+            //read(Namespaces.SOSA.toString())
             add(homeOnto)
             setNsPrefix("td", Namespaces.WOT.toString())
         }

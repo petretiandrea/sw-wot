@@ -42,8 +42,7 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     override fun register(td: ThingDescriptionRDF): Boolean {
         aBoxDataset.apply {
             val exist = doReadTransaction { it.containsNamedModel(td.resourceIdentifier.toString()) }.getOrElse(true)
-            // TODO: check exist
-            doWriteTransaction { it.addNamedModel(td.resourceIdentifier.toString(), td.model) }
+            if(!exist) doWriteTransaction { it.addNamedModel(td.resourceIdentifier.toString(), td.model) }
         }
         return true
     }
