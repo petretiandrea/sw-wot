@@ -1,0 +1,228 @@
+@prefix : <https://www.w3.org/2019/wot/td#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix hctl: <https://www.w3.org/2019/wot/hypermedia#> .
+
+: rdf:type owl:Ontology ;
+    vann:preferredNamespacePrefix "td" ;
+    vann:preferredNamespaceUri "https://www.w3.org/2019/wot/td#" ;
+    owl:versionInfo "0.9.0" ;
+    dc:title "Thing Description Ontology"@en ;
+    rdfs:comment "This ontology aims to model the Web of Things domain according to the W3C Interest Group (http://w3c.github.io/wot/)"@en ;
+    dcterms:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+    dcterms:contributor <http://purl.org/net/mpoveda> , <http://maxime-lefrancois.info/me#> ;
+    dcterms:author <https://vcharpenay.link/#me> ;
+    dc:publisher [ a schema:Organization ; schema:name "W3C Web of Things Working Group" ; schema:url <https://www.w3.org/WoT/WG/> ] .
+
+:supportContact rdf:type owl:AnnotationProperty ;
+    rdfs:label "supportContact" ;
+    rdfs:comment "Provides information about the TD maintainer as URI scheme (e.g., mailto [[RFC6068]], tel [[RFC3966]], https)."@en ;
+    rdfs:seeAlso schema:contactPoint ;
+    rdfs:isDefinedBy : .
+
+:versionInfo rdf:type owl:AnnotationProperty ;
+    rdfs:label "versionInfo" ;
+    rdfs:comment "Provides version information."@en ;
+    rdfs:seeAlso schema:version ;
+    rdfs:isDefinedBy : .
+
+:instance rdf:type owl:AnnotationProperty ;
+    rdfs:label "instance" ;
+    rdfs:comment "Provides a version identicator of this TD instance."@en ;
+    rdfs:isDefinedBy : .
+
+:hasInteractionAffordance rdf:type owl:ObjectProperty  ;
+    rdfs:label "hasInteractionAffordance" ;
+    rdfs:comment "Offers an affordance to interact with the Thing"@en ;
+    rdfs:domain :Thing ;
+    rdfs:range :InteractionAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasPropertyAffordance rdf:type owl:ObjectProperty ;
+    rdfs:label "hasPropertyAffordance" ;
+    rdfs:subPropertyOf :hasInteractionAffordance ;
+    rdfs:comment "All Property-based interaction affordance of the Thing."@en ;
+    rdfs:range :PropertyAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasActionAffordance rdf:type owl:ObjectProperty ;
+    rdfs:label "hasActionAffordance" ;
+    rdfs:subPropertyOf :hasInteractionAffordance ;
+    rdfs:comment "All Action-based interaction affordance of the Thing."@en ;
+    rdfs:range :ActionAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasEventAffordance rdf:type owl:ObjectProperty ;
+    rdfs:label "hasEventAffordance" ;
+    rdfs:subPropertyOf :hasInteractionAffordance ;
+    rdfs:comment "All Event-based interaction affordance of the Thing."@en ;
+    rdfs:range :EventAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasForm rdf:type owl:ObjectProperty ;
+    rdfs:label "hasForm" ;
+    rdfs:comment "Set of form hypermedia controls that describe how an operation can be performed. Forms are serializations of Protocol Bindings."@en ;
+    rdfs:domain :InteractionAffordance, :Thing ;
+    rdfs:range hctl:Form ;
+    rdfs:isDefinedBy : .
+
+:hasLink rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLink" ;
+    rdfs:comment "Provides Web links to arbitrary resources that relate to the specified Thing Description."@en ;
+    rdfs:range hctl:Link ;
+    rdfs:isDefinedBy : .
+
+:hasUriTemplateSchema rdf:type owl:ObjectProperty ;
+    rdfs:label "hasUriTemplateSchema" ;
+    rdfs:comment "Define URI template variables as collection based on schema specifications."@en ;
+    rdfs:domain :InteractionAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasInputSchema rdf:type owl:ObjectProperty ;   
+    rdfs:label "hasInputSchema" ;
+    rdfs:comment "Used to define the input data schema of the action."@en ;
+    rdfs:domain :ActionAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasOutputSchema rdf:type owl:ObjectProperty ;
+    rdfs:label "hasOutputSchema" ;
+    rdfs:comment "Used to define the output data schema of the action."@en ;
+    rdfs:domain :ActionAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasSubscriptionSchema rdf:type owl:ObjectProperty ;
+    rdfs:label "hasSubscriptionSchema" ;
+    rdfs:comment "Defines data that needs to be passed upon subscription, e.g., filters or message format for setting up Webhooks."@en ;
+    rdfs:domain :EventAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasNotificationSchema rdf:type owl:ObjectProperty ;
+    rdfs:label "hasNotificationSchema" ;
+    rdfs:comment "Defines the data schema of the Event instance messages pushed by the Thing."@en ;
+    rdfs:domain :EventAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasCancellationSchema rdf:type owl:ObjectProperty ;
+    rdfs:label "hasCancellationSchema" ;
+    rdfs:comment "Defines any data that needs to be passed to cancel a subscription, e.g., a specific message to remove a Webhook"@en ;
+    rdfs:domain :EventAffordance ;
+    rdfs:isDefinedBy : .
+
+:hasSecurityConfiguration rdf:type owl:ObjectProperty ;
+    rdfs:label "hasSecurityConfiguration" ;
+    rdfs:comment "Set of security definition names, chosen from those defined in securityDefinitions.  These must all be satisfied for access to resources."@en ;
+    rdfs:domain :Thing ;
+    rdfs:isDefinedBy : .
+
+:isSafe rdf:type owl:DatatypeProperty ;
+    rdfs:label "isSafe" ;   
+    rdfs:comment "Signals if the action is safe (=true) or not. Used to signal if there is no internal state (cf. resource state) is changed when invoking an Action. In that case responses can be cached as example."@en ;
+    rdfs:domain :ActionAffordance ;
+    rdfs:range xsd:boolean ;
+    rdfs:isDefinedBy : .
+
+:isIdempotent rdf:type owl:DatatypeProperty ;
+    rdfs:label "isIdempotent" ;   
+    rdfs:comment "Indicates whether the action is idempotent (=true) or not. Informs whether the action can be called repeatedly with the same result, if present, based on the same input."@en ;
+    rdfs:domain :ActionAffordance ;
+    rdfs:range xsd:boolean ;
+    rdfs:isDefinedBy : .
+
+:isObservable rdf:type owl:DatatypeProperty ;        
+    rdfs:label "isObservable" ;        
+    rdfs:comment "A hint that indicates whether Servients hosting the Thing and Intermediaries should provide a Protocol Binding that supports the <code>observeproperty</code> operation for this Property."@en ;
+    rdfs:domain :PropertyAffordance ;
+    rdfs:range xsd:boolean ;
+    rdfs:isDefinedBy : .
+
+:name rdf:type owl:DatatypeProperty ;
+    rdfs:label "name" ;
+    rdfs:comment "Indexing property to store entity names when serializing them in a JSON-LD @index container."@en ;
+    rdfs:domain :InteractionAffordance ;
+    rdfs:range xsd:string ;
+    rdfs:isDefinedBy : .
+
+:ActionAffordance rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "ActionAffordance" ;
+    rdfs:subClassOf :InteractionAffordance ;
+    rdfs:comment "An Interaction Affordance that allows to invoke a function of the Thing, which manipulates state (e.g., toggling a lamp on or off) or triggers a process on the Thing (e.g., dimm a lamp over time)."@en ;
+    rdfs:isDefinedBy : .
+
+:EventAffordance rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "EventAffordance" ;
+    rdfs:subClassOf :InteractionAffordance ;
+    rdfs:comment "An Interaction Affordance that describes an event source, which asynchronously pushes event data to Consumers (e.g., overheating alerts)."@en ;
+    rdfs:isDefinedBy : .
+
+:InteractionAffordance rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "InteractionAffordance" ;
+    rdfs:comment "Metadata of a Thing that shows the possible choices to Consumers, thereby suggesting how Consumers may interact with the Thing. There are many types of potential affordances, but W3C WoT defines three types of Interaction Affordances: Properties, Actions, and Events."@en ;
+    rdfs:isDefinedBy : .
+
+:PropertyAffordance rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "PropertyAffordance" ;
+    rdfs:subClassOf :InteractionAffordance ;
+    rdfs:comment "An Interaction Affordance that exposes state of the Thing. This state can then be retrieved (read) and optionally updated (write). Things can also choose to make Properties observable by pushing the new state after a change."@en ;
+    rdfs:isDefinedBy : .
+
+:Thing rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "Thing"@en ;
+    rdfs:comment "An abstraction of a physical or a virtual entity whose metadata and interfaces are described by a WoT Thing Description, whereas a virtual entity is the composition of one or more Things."@en ;
+    rdfs:isDefinedBy : .
+
+:OperationType rdf:type rdfs:Class, owl:Class ;
+    rdfs:label "OperationType" ;
+    rdfs:comment "Enumeration of well-known operation types necessary to implement the WoT interaction model"@en ;
+    rdfs:subClassOf schema:Enumeration .
+
+:readProperty rdf:type :OperationType ;
+    rdfs:label "readProperty" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:writeProperty rdf:type :OperationType ;
+    rdfs:label "writeProperty" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:observeProperty rdf:type :OperationType ;
+    rdfs:label "observeProperty" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:unobserveProperty rdf:type :OperationType ;
+    rdfs:label "unobserveProperty" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:readMultipleProperties rdf:type :OperationType ;
+    rdfs:label "readMultipleProperties" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:writeMultipleProperties rdf:type :OperationType ;
+    rdfs:label "writeMultipleProperties" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:readAllProperties rdf:type :OperationType ;
+    rdfs:label "readAllProperties" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:writeAllProperties rdf:type :OperationType ;
+    rdfs:label "writeAllProperties" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:invokeAction rdf:type :OperationType ;
+    rdfs:label "invokeAction" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:subscribeEvent rdf:type :OperationType ;
+    rdfs:label "subscribeEvent" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
+
+:unsubscribeEvent rdf:type :OperationType ;
+    rdfs:label "unsubscribeEvent" ;
+    rdfs:comment """Operation type of forms used to read a property value"""@en .
