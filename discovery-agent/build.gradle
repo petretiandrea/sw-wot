@@ -4,4 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation "io.vertx:vertx-lang-kotlin:3.9.1"
+    implementation "io.vertx:vertx-web:3.9.1"
+    implementation "io.vertx:vertx-web-client:3.9.1"
+    implementation "org.json:json:20190722"
 }
