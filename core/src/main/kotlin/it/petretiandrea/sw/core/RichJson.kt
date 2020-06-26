@@ -17,3 +17,5 @@ fun JSONObject.getAsJSONObject(key: String) = getNullableFromJson<JSONObject>(th
 fun JSONObject.getAsJSONArray(key: String) = getNullableFromJson<JSONArray>(this, key)
 fun JSONObject.getAsString(key: String) = getNullableFromJson<String>(this, key)
 fun JSONArray.asJSONObjectArray() = this.map { JSONObject(it) }
+fun JSONObject.getArrayOfJSONObject(key: String) =
+    this.getAsJSONObject(key)?.let { obj -> obj.keySet().map { Pair(it, obj.getJSONObject(it)) }.toMap() }

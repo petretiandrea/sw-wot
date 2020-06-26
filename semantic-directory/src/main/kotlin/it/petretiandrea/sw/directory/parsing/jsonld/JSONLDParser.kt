@@ -1,5 +1,6 @@
 package it.petretiandrea.sw.directory.parsing.jsonld
 
+import it.petretiandrea.sw.core.getAsString
 import org.apache.jena.iri.IRI
 import org.json.JSONObject
 import java.io.PrintWriter
@@ -12,6 +13,16 @@ interface JSONLDParser {
 }
 
 object JSONLDParserFactory {
+    fun fromJson(json: JSONObject): JSONLDParser? = when(json.get("type")) {
+        "ruby" -> {
+            json.getAsString("ruby_exec")?.let { exec ->
+                json.getAsString("script")?.let { script ->
+                    RubyJSONLDParser(exec, script)
+                }
+            }
+        }
+        else -> null
+    }
     fun ruby() = RubyJSONLDParser("ruby", System.getProperty("ruby.parser"))
 }
 

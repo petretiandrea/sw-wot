@@ -1,6 +1,6 @@
 {
   "@context": ["https://www.w3.org/2019/wot/td/v1",
-    {"ssn": "https://www.w3.org/ns/ssn#", "sosa": "http://www.w3.org/ns/sosa#", "my":  "http://www.sw.org/andreapetreti/home-wot#"}],
+    {"ssn": "https://www.w3.org/ns/ssn#", "sosa": "http://www.w3.org/ns/sosa#", "my":  "http://www.sw.org/andreapetreti/home#"}],
   "@type" : "my:Thermometer",
   "title": "LampBella",
   "id": "urn:dev:wot:com:example:servient:lamp",

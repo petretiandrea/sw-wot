@@ -9,8 +9,12 @@ import java.io.Reader
 
 object HomeOnto {
     val NAMESPACE = IRIUtils.fromString("http://www.sw.org/andreapetreti/home#")
-    private val HOME_ONTO_PATH = Source.fromResource("ontologies/home-wot.owl")?.path
-    private val WOT_NORM_PATH = Source.fromResource("ontologies/wot-normalized.owl")?.path
+    //private val HOME_ONTO_PATH = Source.fromResource("ontologies/home-wot.owl")?.path
+    //private val WOT_NORM_PATH = Source.fromResource("ontologies/wot-normalized.owl")?.path
+    private val HOME_ONTO_PATH =
+        "C:\\Users\\Andrea Petreti\\Documents\\IntelliJProject\\semantic-directory-wot\\core\\build\\resources\\main\\ontologies\\home-wot.owl"
+    private val WOT_NORM_PATH =
+        "C:\\Users\\Andrea Petreti\\Documents\\IntelliJProject\\semantic-directory-wot\\core\\build\\resources\\main\\ontologies\\wot-normalized.owl"
 
     fun getModel(): Model {
         val homeOnto = loadModel(File(HOME_ONTO_PATH!!).reader())

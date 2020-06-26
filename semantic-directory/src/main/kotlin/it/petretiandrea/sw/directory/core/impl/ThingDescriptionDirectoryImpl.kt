@@ -71,13 +71,11 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
     override fun searchThing(graphPatternQuery: String?, limit: Int?): List<ThingDescriptionRDF> {
         val queryString = when(graphPatternQuery.getOrElse("")) {
-            "" -> "DESCRIBE * WHERE { ?t a td:Thing } " + limit?.let { " LIMIT $it" }
-            else -> "DESCRIBE * WHERE { $graphPatternQuery } " + limit?.let { " LIMIT $it" }
+            "" -> "DESCRIBE * WHERE { ?t a td:Thing } " + limit?.let { " LIMIT $it" }.orEmpty()
+            else -> "DESCRIBE * WHERE { $graphPatternQuery } " + limit?.let { " LIMIT $it" }.orEmpty()
         }
 
         val query = QueryFactory.createWithPrefix(queryString, Namespaces.getDefaultPrefixMapping())
-        //query.
-        query.havingExprs.forEach { println(it) }
         val thingIds = aBoxDataset.doReadTransaction {
             val infModel = ModelFactory.createInfModel(reasoner, it.getNamedModel("urn:x-arq:UnionGraph"))
             //JenaUtils.Debug.checkInconsistency(infModel)
