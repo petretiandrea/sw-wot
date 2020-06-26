@@ -10,8 +10,7 @@ import it.petretiandrea.sw.directory.restapi.RestApiSemanticDiscovery
 import org.json.JSONObject
 
 fun testPopulate(tdParser: TDParser, tdd: ThingDescriptionDirectory) {
-    val model = tdParser.parseRDF(JSONObject(Source.fromResource("customthing.json")!!.readText()))!!
-    val td = ThingDescriptionRDF(IRIUtils.createUrnUuid(), model)
+    val td = tdParser.parseRDF(JSONObject(Source.fromResource("customthing.json")!!.readText()))!!
     tdd.register(td)
 }
 

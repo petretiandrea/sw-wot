@@ -10,13 +10,16 @@ import java.io.Reader
 object HomeOnto {
     val NAMESPACE = IRIUtils.fromString("http://www.sw.org/andreapetreti/home#")
     private val HOME_ONTO_PATH = Source.fromResource("ontologies/home-wot.owl")?.path
+    private val WOT_NORM_PATH = Source.fromResource("ontologies/wot-normalized.owl")?.path
 
     fun getModel(): Model {
         val homeOnto = loadModel(File(HOME_ONTO_PATH!!).reader())
+        val wotOnto = loadModel(File(WOT_NORM_PATH!!).reader())
         return ModelFactory.createDefaultModel().apply {
-            read(wotOntologyReader(), Namespaces.WOT.toString(), "TURTLE")
+            //read(wotOntologyReader(), Namespaces.WOT.toString(), "TURTLE")
             //read(Namespaces.SSN.toString())
             //read(Namespaces.SOSA.toString())
+            add(wotOnto)
             add(homeOnto)
             setNsPrefix("td", Namespaces.WOT.toString())
         }

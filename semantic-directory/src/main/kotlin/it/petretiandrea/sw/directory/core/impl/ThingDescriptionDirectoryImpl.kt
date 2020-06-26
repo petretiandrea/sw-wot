@@ -3,21 +3,28 @@ package it.petretiandrea.sw.directory.core.impl
 import it.petretiandrea.sw.core.getOrElse
 import it.petretiandrea.sw.core.ontology.HomeOnto
 import it.petretiandrea.sw.core.ontology.Namespaces
+import it.petretiandrea.sw.core.ontology.WoT
+import it.petretiandrea.sw.core.utils.IRIUtils
 import it.petretiandrea.sw.core.utils.JenaUtils
 import it.petretiandrea.sw.directory.core.ThingDescriptionDirectory
 import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
-import it.petretiandrea.sw.jena.extension.doReadTransaction
-import it.petretiandrea.sw.jena.extension.doWriteTransaction
-import openllet.jena.PelletReasonerFactory
+import it.petretiandrea.sw.directory.extension.createCopy
+import it.petretiandrea.sw.directory.extension.doReadTransaction
+import it.petretiandrea.sw.directory.extension.doWriteTransaction
+import it.petretiandrea.sw.jena.extension.QueryFactory
 import org.apache.jena.iri.IRI
-import org.apache.jena.query.Dataset
-import org.apache.jena.query.QueryExecutionFactory
-import org.apache.jena.query.ResultSetFormatter
+import org.apache.jena.query.*
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.reasoner.Reasoner
+import org.apache.jena.reasoner.ReasonerRegistry
+import org.apache.jena.shared.PrefixMapping
+import org.apache.jena.sparql.resultset.RDFOutput
+import org.apache.jena.sparql.util.PrefixMapping2
 import org.apache.jena.tdb2.TDB2
 import org.apache.jena.tdb2.TDB2Factory
+import org.apache.jena.util.PrefixMappingUtils
+import org.apache.jena.vocabulary.RDF
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
@@ -30,7 +37,7 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     init {
         JenaUtils.Debug.enable()
 
-        reasoner = PelletReasonerFactory.theInstance().create()
+        reasoner = ReasonerRegistry.getOWLReasoner() // PelletReasonerFactory.theInstance().create()
         aBoxDataset = TDB2Factory.createDataset().apply {
             context.set(TDB2.symUnionDefaultGraph, true)
             doWriteTransaction {
@@ -60,6 +67,41 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
             JSONObject(jsonStream.toString("UTF-8"))
         }
         return json.getOrElse(JSONObject())
+    }
+
+    override fun searchThing(graphPatternQuery: String?, limit: Int?): List<ThingDescriptionRDF> {
+        val queryString = when(graphPatternQuery.getOrElse("")) {
+            "" -> "DESCRIBE * WHERE { ?t a td:Thing } " + limit?.let { " LIMIT $it" }
+            else -> "DESCRIBE * WHERE { $graphPatternQuery } " + limit?.let { " LIMIT $it" }
+        }
+
+        val query = QueryFactory.createWithPrefix(queryString, Namespaces.getDefaultPrefixMapping())
+        //query.
+        query.havingExprs.forEach { println(it) }
+        val thingIds = aBoxDataset.doReadTransaction {
+            val infModel = ModelFactory.createInfModel(reasoner, it.getNamedModel("urn:x-arq:UnionGraph"))
+            //JenaUtils.Debug.checkInconsistency(infModel)
+            infModel.prepare()
+            val solution = QueryExecutionFactory.create(query, infModel).execDescribe()
+            solution.listStatements().forEach { println(it) }
+            getThingIds(solution)
+        }.getOrElse(emptyList())
+
+
+        return retrieveThings(*thingIds.toTypedArray())
+    }
+
+    private fun retrieveThings(vararg thingIds: String): List<ThingDescriptionRDF> {
+        return aBoxDataset.doReadTransaction { dataset ->
+            thingIds.map {
+                ThingDescriptionRDF(IRIUtils.fromString(it), dataset.getNamedModel(it).createCopy())
+            }
+        }.getOrElse(emptyList())
+    }
+
+    private fun getThingIds(model: Model): List<String> {
+        return model.listStatements(null, RDF.type, WoT.THING).toSet()
+            .map { stmt -> stmt.subject.uri }
     }
 
     override fun get(thingIdentifier: IRI): ThingDescriptionRDF? {

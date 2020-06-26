@@ -3,9 +3,9 @@
     {
       "ssn": "https://www.w3.org/ns/ssn/",
       "sosa": "http://www.w3.org/ns/sosa/",
-      "my":  "http://www.sw.org/andreapetreti/home-wot#"
+      "home":  "http://www.sw.org/andreapetreti/home#"
     }],
-  "@type" : "my:Thermometer",
+  "@type" : "home:Thermometer",
   "title": "ThermometerA",
   "id": "urn:thing:thermometer_a",
   "name": "ThermometerA",
@@ -17,7 +17,7 @@
   },
   "properties": {
     "roomTemperature": {
-      "my:about" : {"@id": "my:Ambient_Temperature"},
+      "my:about" : {"@id": "home:Ambient_Temperature"},
       "description" : "The current room temperature",
       "writable": false,
       "observable": false,
@@ -28,7 +28,7 @@
       }]
     },
     "location": {
-      "my:about": { "@id":  "my:GPSLocation" },
+      "my:about": { "@id":  "home:GPSLocation" },
       "description": "The csss",
       "writable": false,
       "observable": false,

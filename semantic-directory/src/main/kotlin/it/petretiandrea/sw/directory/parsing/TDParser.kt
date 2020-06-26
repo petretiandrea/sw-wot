@@ -1,13 +1,15 @@
 package it.petretiandrea.sw.directory.parsing
 
 import it.petretiandrea.sw.core.parsing.TDValidator
+import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.parsing.jsonld.JSONLDParser
 import it.petretiandrea.sw.directory.parsing.jsonld.JSONLDParserFactory
 import org.apache.jena.rdf.model.Model
 import org.json.JSONObject
 
 interface TDParser {
-    fun parseRDF(thingDescription: JSONObject): Model?
+    fun parseRDF(thingDescription: JSONObject): ThingDescriptionRDF?
+    fun fromRDF(thingDescriptionRDF: ThingDescriptionRDF): JSONObject?
 
     companion object {
         operator fun invoke(validator: TDValidator = TDValidator(),

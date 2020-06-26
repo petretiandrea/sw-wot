@@ -9,6 +9,7 @@ interface ThingDescriptionDirectory {
     fun get(thingIdentifier: IRI) : ThingDescriptionRDF?
 
     fun querySparql(query: String) : JSONObject
+    fun searchThing(graphPatternQuery: String?, limit: Int?) : List<ThingDescriptionRDF>
 
     companion object {
         operator fun invoke(): ThingDescriptionDirectory = ThingDescriptionDirectoryImpl()
