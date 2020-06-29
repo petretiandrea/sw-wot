@@ -1,6 +1,7 @@
 package it.petretiandrea.sw.core
 
 import it.petretiandrea.sw.core.impl.ConsumedThingImpl
+import it.petretiandrea.sw.core.impl.MockConsumedThing
 import org.json.JSONObject
 
 // could be a more complex structure that know the real concrete type
@@ -13,6 +14,6 @@ interface ConsumedThing {
 
 object ConsumedThingFactory {
 
-    fun fromDescriptionModel(thingDescriptionRDF: ThingDescriptionRDF) = ConsumedThingImpl(thingDescriptionRDF)
+    fun fromDescriptionModel(thingDescriptionRDF: ThingDescriptionRDF) = MockConsumedThing()//ConsumedThingImpl(thingDescriptionRDF)
     //fun fromDescriptionJson(thingDescription: JSONObject)
 }
