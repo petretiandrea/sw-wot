@@ -49,7 +49,7 @@ class RestApiSemanticDiscovery(private val tdParser: TDParser,
 
     private fun handlerGetThings(context: RoutingContext) {
         val graphPatternQuery = context.queryParam("query").firstOrNull()
-        val limit = context.queryParam("limit").firstOrNull().getOrElse("1").toInt()
+        val limit = context.queryParam("limit").firstOrNull()?.toInt()
 
         thingDescriptionDirectory.searchThing(graphPatternQuery, limit)
             .map { tdParser.fromRDF(it) }

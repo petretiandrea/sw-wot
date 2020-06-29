@@ -17,7 +17,7 @@
   },
   "properties": {
     "roomTemperature": {
-      "my:about" : {"@id": "home:Ambient_Temperature"},
+      "sosa:observes" : {"@id": "home:Ambient_Temperature"},
       "description" : "The current room temperature",
       "writable": false,
       "observable": false,
@@ -28,7 +28,7 @@
       }]
     },
     "location": {
-      "my:about": { "@id":  "home:GPSLocation" },
+      "sosa:observes": { "@id":  "home:GPSLocation" },
       "description": "The csss",
       "writable": false,
       "observable": false,

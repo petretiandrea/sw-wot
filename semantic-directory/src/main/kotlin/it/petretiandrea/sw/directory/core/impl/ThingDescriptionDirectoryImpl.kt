@@ -7,12 +7,12 @@ import it.petretiandrea.sw.core.ontology.WoT
 import it.petretiandrea.sw.core.utils.IRIUtils
 import it.petretiandrea.sw.core.utils.JenaUtils
 import it.petretiandrea.sw.directory.core.ThingDescriptionDirectory
-import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
+import it.petretiandrea.sw.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.extension.createCopy
 import it.petretiandrea.sw.directory.extension.doReadTransaction
 import it.petretiandrea.sw.directory.extension.doWriteTransaction
 import it.petretiandrea.sw.directory.extension.getInferredDataset
-import it.petretiandrea.sw.jena.extension.QueryFactory
+import it.petretiandrea.sw.core.QueryFactory
 import org.apache.jena.iri.IRI
 import org.apache.jena.query.*
 import org.apache.jena.rdf.model.Model
@@ -64,8 +64,8 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
     override fun searchThing(graphPatternQuery: String?, limit: Int?): List<ThingDescriptionRDF> {
         val queryString = when(graphPatternQuery.getOrElse("")) {
-            "" -> "DESCRIBE * WHERE { ?t a td:Thing } " + limit?.let { " LIMIT $it" }
-            else -> "DESCRIBE * WHERE { $graphPatternQuery } " + limit?.let { " LIMIT $it" }
+            "" -> "DESCRIBE * WHERE { ?t a td:Thing } " + limit?.let { " LIMIT $it" }.orEmpty()
+            else -> "DESCRIBE * WHERE { $graphPatternQuery } " + limit?.let { " LIMIT $it" }.orEmpty()
         }
 
         val query = QueryFactory.createWithPrefix(queryString, Namespaces.getDefaultPrefixMapping())
@@ -81,7 +81,10 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     private fun retrieveThings(vararg thingIds: String): List<ThingDescriptionRDF> {
         return aBoxDataset.doReadTransaction { dataset ->
             thingIds.map {
-                ThingDescriptionRDF(IRIUtils.fromString(it), dataset.getNamedModel(it).createCopy())
+                ThingDescriptionRDF(
+                    IRIUtils.fromString(it),
+                    dataset.getNamedModel(it).createCopy()
+                )
             }
         }.getOrElse(emptyList())
     }

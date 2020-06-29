@@ -1,6 +1,13 @@
 package it.petretiandrea.sw.core
 
 import io.vertx.core.json.JsonObject
+import it.petretiandrea.sw.core.ontology.Namespaces
+import it.petretiandrea.sw.core.ontology.OntologyUtils
+import it.petretiandrea.sw.core.ontology.WoT
+import org.apache.jena.assembler.Mode
+import org.apache.jena.query.QueryExecutionFactory
+import org.apache.jena.rdf.model.Model
+import org.apache.jena.rdf.model.Resource
 
 /*
 - at high level we can search thing by tipology
@@ -9,36 +16,37 @@ import io.vertx.core.json.JsonObject
  */
 
 interface SearchEngine {
-    suspend fun searchThingsByType(deviceType: HomeOnto.DeviceType): List<JsonObject>
+
 }
 
 object MyEngine : SearchEngine {
 
-    private val directoryClient: ThingDirectoryClient = ThingDirectoryClient("localhost", 8080)
+    val directoryClient: ThingDirectoryClient = ThingDirectoryClient("localhost", 10000)
 
-    val commonPrefix = """
-        PREFIX schema: <http://schema.org/>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX td: <https://www.w3.org/2019/wot/td#>
-        PREFIX home: <http://www.sw.org/andreapetreti/home-wot#>
-        PREFIX ssn: <http://www.w3.org/ns/ssn/>
-        PREFIX sosa: <http://www.w3.org/ns/sosa/>
-        %s
-    """.trimIndent()
+    suspend fun readValuesOf(deviceType: HomeOnto.DeviceType, valueType: String) : List<Value> {
+        val graphPattern = """
+            ?t td:hasPropertyAffordance ?p.
+            ?p sosa:observes home:$valueType.
+            ?p td:hasForm ?form.
+        """.trimIndent()
 
-    override suspend fun searchThingsByType(deviceType: HomeOnto.DeviceType): List<JsonObject> {
-        val query = commonPrefix.format(
-            "SELECT ?thingId WHERE { ?thingId a home:${deviceType.typeName}. }"
-        )
-        val response = directoryClient.querySparql(query)
-            .map { solution -> solution.getResource("thingId").uri }
+        val localQuery = QueryFactory.createWithPrefix("SELECT * WHERE { $graphPattern }", Namespaces.getDefaultPrefixMapping())
 
+        val things = directoryClient.searchThings(graphPattern)
+        val consumedThings = things.map { ConsumedThingFactory.fromDescriptionModel(it) }
+        val propertyName = things.map { QueryExecutionFactory.create(localQuery, it.model).execSelect().toSparqlResult() }
+            .map {
+                val property = it.first().getResource("p")
+                extractPropertyName(property, it.sourceModel)
+            }
 
-
-         return emptyList()
+        return consumedThings.zip(propertyName).map { (thing, property) -> thing.readProperty(property) }
     }
+
+    private fun extractPropertyName(property: Resource, thingModel: Model): String {
+        return thingModel.listObjectsOfProperty(property, WoT.name()).toSet().first().asLiteral().string
+    }
+
 }
 
 object HomeOnto {
@@ -51,6 +59,8 @@ object HomeOnto {
 
 suspend fun main() {
 
-    MyEngine.searchThingsByType(HomeOnto.DeviceType.Thermostat)
+    MyEngine.readValuesOf(HomeOnto.DeviceType.Thermometer, "Ambient_Temperature").forEach {
+        println(it)
+    }
 
 }
