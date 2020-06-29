@@ -6,7 +6,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
 import it.petretiandrea.sw.directory.core.ThingDescriptionDirectory
-import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.parsing.TDParser
 import it.petretiandrea.sw.core.getOrElse
 import org.json.JSONArray
@@ -16,7 +15,7 @@ fun JSONObject.toVertxJson() = JsonObject(this.toString())
 fun JSONArray.toVertxJson() = JsonArray(this.toString())
 fun JsonObject.toJSON() = JSONObject(this.toString())
 
-class RestApiSemanticDiscovery(private val TDParser: TDParser,
+class RestApiSemanticDiscovery(private val tdParser: TDParser,
                                private val thingDescriptionDirectory: ThingDescriptionDirectory,
                                port: Int = 8080,
                                host: String = "0.0.0.0") : RestApiVerticle(port, host) {
@@ -53,7 +52,7 @@ class RestApiSemanticDiscovery(private val TDParser: TDParser,
         val limit = context.queryParam("limit").firstOrNull().getOrElse("1").toInt()
 
         thingDescriptionDirectory.searchThing(graphPatternQuery, limit)
-            .map { TDParser.fromRDF(it) }
+            .map { tdParser.fromRDF(it) }
             .fold(JSONArray(), { array, obj -> array.put(obj) })
             .let {
                 context.response().setStatusCode(200).end(it.toVertxJson().encode())
@@ -63,13 +62,12 @@ class RestApiSemanticDiscovery(private val TDParser: TDParser,
     private fun handleSparql(context: RoutingContext) {
         val query = context.bodyAsString
         val response = query?.let { thingDescriptionDirectory.querySparql(it) }
-
         context.response().setStatusCode(200).end(response?.toVertxJson()?.encode().getOrElse(""))
     }
 
     private fun handleRegistration(context: RoutingContext) {
         val thingJson: JsonObject? = context.bodyAsJson
-        val thingDescriptionRDF = thingJson?.let { TDParser.parseRDF(it.toJSON()) }
+        val thingDescriptionRDF = thingJson?.let { tdParser.parseRDF(it.toJSON()) }
 
         if (thingDescriptionRDF != null) {
             thingDescriptionDirectory.register(thingDescriptionRDF)

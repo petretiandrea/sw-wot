@@ -11,24 +11,19 @@ import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.extension.createCopy
 import it.petretiandrea.sw.directory.extension.doReadTransaction
 import it.petretiandrea.sw.directory.extension.doWriteTransaction
+import it.petretiandrea.sw.directory.extension.getInferredDataset
 import it.petretiandrea.sw.jena.extension.QueryFactory
 import org.apache.jena.iri.IRI
 import org.apache.jena.query.*
 import org.apache.jena.rdf.model.Model
-import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.reasoner.Reasoner
 import org.apache.jena.reasoner.ReasonerRegistry
-import org.apache.jena.shared.PrefixMapping
-import org.apache.jena.sparql.resultset.RDFOutput
-import org.apache.jena.sparql.util.PrefixMapping2
 import org.apache.jena.tdb2.TDB2
 import org.apache.jena.tdb2.TDB2Factory
-import org.apache.jena.util.PrefixMappingUtils
 import org.apache.jena.vocabulary.RDF
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
-/// exist def q = "ASK WHERE { <${iri}> a <${DCAT.DATASET}> . FILTER EXISTS { GRAPH <${iri}> { ?s ?p ?o }}}"
 internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
     private val reasoner: Reasoner
@@ -55,18 +50,16 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     }
 
     override fun querySparql(query: String): JSONObject {
-        val json = aBoxDataset.doReadTransaction {
+        val inferredDataset = aBoxDataset.getInferredDataset(reasoner, "urn:x-arq:UnionGraph")
+        val response = inferredDataset?.doReadTransaction {
             val jsonStream = ByteArrayOutputStream()
-            val infModel = ModelFactory.createInfModel(reasoner, it.getNamedModel("urn:x-arq:UnionGraph"))
-            //JenaUtils.Debug.checkInconsistency(infModel)
-            infModel.prepare()
-            QueryExecutionFactory.create(query, infModel)
+            QueryExecutionFactory.create(query, it)
                 .execSelect()
                 .let { ResultSetFormatter.outputAsJSON(jsonStream, it) }
 
             JSONObject(jsonStream.toString("UTF-8"))
         }
-        return json.getOrElse(JSONObject())
+        return response.getOrElse(JSONObject())
     }
 
     override fun searchThing(graphPatternQuery: String?, limit: Int?): List<ThingDescriptionRDF> {
@@ -76,19 +69,13 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
         }
 
         val query = QueryFactory.createWithPrefix(queryString, Namespaces.getDefaultPrefixMapping())
-        //query.
-        query.havingExprs.forEach { println(it) }
-        val thingIds = aBoxDataset.doReadTransaction {
-            val infModel = ModelFactory.createInfModel(reasoner, it.getNamedModel("urn:x-arq:UnionGraph"))
-            //JenaUtils.Debug.checkInconsistency(infModel)
-            infModel.prepare()
-            val solution = QueryExecutionFactory.create(query, infModel).execDescribe()
-            solution.listStatements().forEach { println(it) }
+
+        val inferredDataset = aBoxDataset.getInferredDataset(reasoner, "urn:x-arq:UnionGraph")
+        val thingIds = inferredDataset?.doReadTransaction {
+            val solution = QueryExecutionFactory.create(query, it).execDescribe()
             getThingIds(solution)
-        }.getOrElse(emptyList())
-
-
-        return retrieveThings(*thingIds.toTypedArray())
+        }
+        return retrieveThings(*thingIds.getOrElse(emptyList()).toTypedArray())
     }
 
     private fun retrieveThings(vararg thingIds: String): List<ThingDescriptionRDF> {
@@ -105,11 +92,11 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     }
 
     override fun get(thingIdentifier: IRI): ThingDescriptionRDF? {
-        val query = "CONSTRUCT { ?s ?p ?o } WHERE { GRAPH <$thingIdentifier> { ?s ?p ?o }}"
         return aBoxDataset.doReadTransaction {
-            QueryExecutionFactory.create(query, it)
-                .apply { context.set(TDB2.symUnionDefaultGraph, true) }
-                .let { ThingDescriptionRDF(thingIdentifier, it.execConstruct()) }
+            ThingDescriptionRDF(
+                thingIdentifier,
+                it.getNamedModel(thingIdentifier.toString())
+            )
         }
     }
 

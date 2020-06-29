@@ -1,10 +1,19 @@
 package it.petretiandrea.sw.directory.extension
 
 import org.apache.jena.query.Dataset
+import org.apache.jena.query.DatasetFactory
 import org.apache.jena.query.ReadWrite
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
+import org.apache.jena.reasoner.Reasoner
 
+fun Dataset.getInferredDataset(reasoner: Reasoner, namedGraph: String): Dataset? {
+    return this.doReadTransaction {
+        val infModel = ModelFactory.createInfModel(reasoner, this.getNamedModel(namedGraph))
+        infModel.prepare()
+        DatasetFactory.wrap(infModel)
+    }
+}
 
 fun <T> Dataset.doTransaction(operation: ReadWrite, map: (Dataset) -> T) : T? {
     return try {
