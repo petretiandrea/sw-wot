@@ -1,5 +1,6 @@
 package it.petretiandrea.sw.directory.core
 
+import it.petretiandrea.sw.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.core.impl.ThingDescriptionDirectoryImpl
 import org.apache.jena.iri.IRI
 import org.json.JSONObject

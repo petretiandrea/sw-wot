@@ -1,4 +1,4 @@
-package it.petretiandrea.sw.jena.extension
+package it.petretiandrea.sw.core
 
 import org.apache.jena.query.Query
 import org.apache.jena.query.QueryFactory

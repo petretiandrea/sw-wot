@@ -1,22 +1,16 @@
 package it.petretiandrea.sw.directory.parsing
 
-import com.github.jsonldjava.core.JsonLdOptions
-import com.github.jsonldjava.core.JsonLdProcessor
 import it.petretiandrea.sw.core.getAsString
 import it.petretiandrea.sw.core.getOrElse
 import it.petretiandrea.sw.core.ontology.Namespaces
-import it.petretiandrea.sw.core.ontology.WoT
 import it.petretiandrea.sw.core.parsing.TDValidator
 import it.petretiandrea.sw.core.utils.ID
 import it.petretiandrea.sw.core.utils.IRIUtils
-import it.petretiandrea.sw.directory.core.ThingDescriptionRDF
+import it.petretiandrea.sw.core.ThingDescriptionRDF
 import it.petretiandrea.sw.directory.parsing.jsonld.JSONLDParser
-import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
-import org.apache.jena.riot.Lang
 import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.riot.RDFFormat
-import org.apache.jena.riot.writer.JsonLDWriter
 import org.json.JSONObject
 import java.io.StringWriter
 
@@ -47,6 +41,8 @@ class TDParserImpl(private val validator: TDValidator,
         val stringWriter = StringWriter()
         RDFDataMgr.write(stringWriter, thingDescriptionRDF.model, RDFFormat.JSONLD_PRETTY)
         stringWriter.close()
-        return JSONObject(stringWriter.toString())
+        return JSONObject(stringWriter.toString()).apply {
+            put("id", getAsString("id").getOrElse(thingDescriptionRDF.resourceIdentifier.toString()))
+        }
     }
 }

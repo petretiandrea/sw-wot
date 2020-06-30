@@ -48,21 +48,20 @@ class RestApiSemanticDiscovery(private val tdParser: TDParser,
     }
 
     private fun handlerGetThings(context: RoutingContext) {
-        val query: String? = context.queryParams().get("query")
-        val limit: Int? = context.queryParams().get("limit")?.toInt()
+        val graphPatternQuery = context.queryParam("query").firstOrNull()
+        val limit = context.queryParam("limit").firstOrNull()?.toInt()
 
-        thingDescriptionDirectory.searchThing(query, limit)
+        thingDescriptionDirectory.searchThing(graphPatternQuery, limit)
             .map { tdParser.fromRDF(it) }
-            .foldRight(JsonArray(), { obj, array -> obj?.let { array.add(it.toVertxJson()) }; array })
+            .fold(JSONArray(), { array, obj -> array.put(obj) })
             .let {
-                context.response().setStatusCode(200).end(it.encodePrettily())
+                context.response().setStatusCode(200).end(it.toVertxJson().encode())
             }
     }
 
     private fun handleSparql(context: RoutingContext) {
         val query = context.bodyAsString
         val response = query?.let { thingDescriptionDirectory.querySparql(it) }
-
         context.response().setStatusCode(200).end(response?.toVertxJson()?.encode().getOrElse(""))
     }
 
