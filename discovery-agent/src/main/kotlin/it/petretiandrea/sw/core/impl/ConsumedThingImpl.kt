@@ -10,7 +10,7 @@ import it.petretiandrea.sw.core.Value
 class ConsumedThingImpl(
     override val properties: Map<String, Form>) : ConsumedThing {
 
-    private val formClient = HttpFormClient()
+    private val formClient = HttpFormClient
 
     // in real implementation, need to choose the right client based on Form, using method like getClientFor
     // https://github.com/eclipse/thingweb.node-wot/blob/aab80bfa0fa15eb0aff293273f998333e8b7df28/packages/core/src/consumed-thing.ts#L200
@@ -26,7 +26,7 @@ class ConsumedThingImpl(
     }
 }
 
-class HttpFormClient {
+object HttpFormClient {
     private val vertx = Vertx.vertx()
     private val web = WebClient.create(vertx)
 
