@@ -19,7 +19,7 @@ interface ThingFetchRuntime {
             override suspend fun fetchValues(things: List<ConsumedThing>, properties: List<String>): List<Value> {
                 return things.zip(properties)
                     .map { (thing, property) -> dispatcher.async { thing.readProperty(property) } }
-                    .map { it.await() }
+                    .mapNotNull { it.await() }
             }
         }
     }

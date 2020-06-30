@@ -6,6 +6,8 @@ import it.petretiandrea.sw.core.ontology.FeatureProperty
 import it.petretiandrea.sw.core.ontology.Namespaces
 import it.petretiandrea.sw.core.ontology.WoT
 import it.petretiandrea.sw.core.runtime.ThingFetchRuntime
+import it.petretiandrea.sw.core.utils.ThingCollectQuery
+import it.petretiandrea.sw.core.utils.ThingQuery
 import org.apache.jena.query.QueryExecutionFactory
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.Resource
@@ -14,33 +16,21 @@ class DiscoverSystemImpl(
     private val directoryClient: ThingDirectoryClient,
     private val fetchRuntime: ThingFetchRuntime) : DiscoverSystem {
 
-    override suspend fun searchThings(deviceType: DeviceType): List<ConsumedThing> {
-        val graphPattern = "?t a ${deviceType.name}."
-        return search(graphPattern)
-    }
+    override suspend fun searchThings(query: ThingQuery): List<ConsumedThing> = search(buildGraphPatternFromQuery(query))
 
     override suspend fun search(graphPattern: String): List<ConsumedThing> {
         return directoryClient.searchThings(graphPattern).map { ConsumedThingFactory.fromDescriptionModel(it) }
     }
 
-    override suspend fun collectData(featureProperty: FeatureProperty) : List<Value> {
-        val graphPattern = """
-            ?t td:hasPropertyAffordance ?p.
-            ?p sosa:observes home:${featureProperty.name}.
-            ?p td:hasForm ?form.
-        """.trimIndent()
-
-        return collectData(graphPattern, "p")
-    }
-
-    override suspend fun collectData(deviceType: DeviceType, featureProperty: FeatureProperty) : List<Value> {
-        val graphPattern = """
-            ?t a home:${deviceType.name}.
-            ?t td:hasPropertyAffordance ?p.
-            ?p sosa:observes home:${featureProperty.name}.
-            ?p td:hasForm ?form.
-        """.trimIndent()
-        return collectData(graphPattern, "p")
+    override suspend fun collectData(query: ThingCollectQuery): List<Value> {
+        val queryPattern = query.filter?.let { buildGraphPatternFromQuery(it) }.orEmpty().let {
+            it +  """
+                ?t td:hasPropertyAffordance ?collectProperty.
+                ?collectProperty sosa:observes home:${query.collectOn.name}.
+                ?collectProperty td:hasForm ?form.
+            """.trimIndent()
+        }
+        return collectData(queryPattern, "collectProperty")
     }
 
     override suspend fun collectData(graphPattern: String, propertyMarker: String): List<Value> {
@@ -48,6 +38,20 @@ class DiscoverSystemImpl(
         val consumedThings = things.map { ConsumedThingFactory.fromDescriptionModel(it) }
         val propertiesName = propertiesNameFromQuery(things, graphPattern, propertyMarker)
         return fetchRuntime.fetchValues(consumedThings, propertiesName)
+    }
+
+    private fun buildGraphPatternFromQuery(query: ThingQuery): String {
+        val patternBuilder = StringBuilder()
+        query.deviceType?.let { patternBuilder.appendln("?t a home:${it.name}.") }
+        query.observeProperties.forEachIndexed { index, prop ->
+            patternBuilder.appendln("?t td:hasPropertyAffordance ?p$index.")
+            patternBuilder.appendln("?p$index sosa:observes home:${prop.name}.")
+        }
+        query.actsProperties.forEachIndexed { index, prop ->
+            patternBuilder.appendln("?t td:hasActionAffordance ?a$index.")
+            patternBuilder.appendln("?a$index sosa:observes home:${prop.name}")
+        }
+        return patternBuilder.toString()
     }
 
     private fun propertiesNameFromQuery(things: List<ThingDescriptionRDF>, graphPattern: String, markerTag: String): List<String> {

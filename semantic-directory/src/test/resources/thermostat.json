@@ -41,6 +41,7 @@
   },
   "actions": {
     "changeRoomTemperature" : {
+      "sosa:observes" : {"@id": "home:Ambient_Temperature"},
       "description": "Ciaoo",
       "forms": [{
         "href": "coaps://mylamp.example.com/status",
