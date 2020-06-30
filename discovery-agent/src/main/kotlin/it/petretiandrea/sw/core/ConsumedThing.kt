@@ -10,6 +10,7 @@ import org.apache.jena.rdf.model.Model
 typealias Value = String
 
 interface ConsumedThing {
+    val properties: Map<String, Form>
     suspend fun readProperty(propertyName: String) : Value?
     suspend fun readAllProperties(vararg propertyNames: String): List<Value>
 }

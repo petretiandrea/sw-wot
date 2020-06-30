@@ -1,6 +1,7 @@
 package it.petretiandrea.sw.core.impl
 
 import it.petretiandrea.sw.core.ConsumedThing
+import it.petretiandrea.sw.core.Form
 import it.petretiandrea.sw.core.Value
 import kotlin.random.Random
 
@@ -15,6 +16,11 @@ object DefaultGenerator : GenFunction {
 }
 
 class MockConsumedThing(val genFunction: GenFunction) : ConsumedThing {
+
+    override val properties: Map<String, Form> = mapOf(
+        "roomTemperature" to Form("", ""),
+        "location" to Form("", "")
+    )
 
     companion object {
         operator fun invoke() = MockConsumedThing(DefaultGenerator)
