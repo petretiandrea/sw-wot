@@ -7,10 +7,12 @@ import it.petretiandrea.sw.directory.parsing.TDParser
 import it.petretiandrea.sw.directory.parsing.jsonld.JSONLDParserFactory
 import it.petretiandrea.sw.directory.restapi.RestApiSemanticDiscovery
 import org.json.JSONObject
+import java.io.File
 
-fun testPopulate(tdParser: TDParser, tdd: ThingDescriptionDirectory) {
-    val td = tdParser.parseRDF(JSONObject(Source.fromResource("customthing.json")!!.readText()))!!
-    tdd.register(td)
+fun populateFromFolder(path: String, tdParser: TDParser, tdd: ThingDescriptionDirectory) {
+    val files = File(path).listFiles()
+    files?.mapNotNull { tdParser.parseRDF(JSONObject(it.readText())) }
+        ?.forEach { tdd.register(it) }
 }
 
 fun main() {
@@ -19,6 +21,8 @@ fun main() {
 
     val parser = TDParser(jsonLdParser = jsonLdParser)
     val tdd = ThingDescriptionDirectory()
+    populateFromFolder(config.getString("thing_folder"), parser, tdd)
+
     val restVerticle = RestApiSemanticDiscovery(
         tdParser = parser,
         thingDescriptionDirectory = tdd,
@@ -26,8 +30,5 @@ fun main() {
         port = config.getInt("port"))
 
     val vertx = Vertx.vertx()
-
     vertx.deployVerticle(restVerticle)
-
-    testPopulate(parser, tdd)
 }
