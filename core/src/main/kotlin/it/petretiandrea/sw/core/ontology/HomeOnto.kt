@@ -16,6 +16,7 @@ sealed class LocationType(name: String) : FeatureProperty(name) {
 }
 
 sealed class FeatureProperty(val name: String) {
+    object Temperature : FeatureProperty("Temperature")
     object AmbientHumidity : FeatureProperty("Ambient_Humidity")
     object AmbientTemperature : FeatureProperty("Ambient_Temperature")
 }
@@ -25,9 +26,9 @@ object HomeOnto {
     //private val HOME_ONTO_PATH = Source.fromResource("ontologies/home-wot.owl")?.path
     //private val WOT_NORM_PATH = Source.fromResource("ontologies/wot-normalized.owl")?.path
     private val HOME_ONTO_PATH =
-        "C:\\Users\\Andrea Petreti\\Documents\\IntelliJProject\\semantic-directory-wot\\core\\build\\resources\\main\\ontologies\\home-wot.owl"
+        "core/src/main/resources/ontologies/home-wot.owl"
     private val WOT_NORM_PATH =
-        "C:\\Users\\Andrea Petreti\\Documents\\IntelliJProject\\semantic-directory-wot\\core\\build\\resources\\main\\ontologies\\wot-normalized.owl"
+        "core/src/main/resources/ontologies/wot-normalized.owl"
 
 
     fun getModel(): Model {
