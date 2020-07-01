@@ -20,7 +20,7 @@
       "observable": false,
       "type": "string",
       "forms": [{
-        "href": "https://localhost:8080/bodyTemp",
+        "href": "https://localhost:8081/bodyTemp",
         "mediaType": "application/json"
       }]
     }

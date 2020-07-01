@@ -16,13 +16,17 @@ import it.petretiandrea.sw.core.QueryFactory
 import org.apache.jena.iri.IRI
 import org.apache.jena.query.*
 import org.apache.jena.rdf.model.Model
+import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.reasoner.Reasoner
 import org.apache.jena.reasoner.ReasonerRegistry
+import org.apache.jena.riot.Lang
+import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.tdb2.TDB2
 import org.apache.jena.tdb2.TDB2Factory
 import org.apache.jena.vocabulary.RDF
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
@@ -91,7 +95,7 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
     private fun getThingIds(model: Model): List<String> {
         return model.listStatements(null, RDF.type, WoT.THING).toSet()
-            .map { stmt -> stmt.subject.uri }
+            .map { stmt -> stmt.subject.toString() }
     }
 
     override fun get(thingIdentifier: IRI): ThingDescriptionRDF? {

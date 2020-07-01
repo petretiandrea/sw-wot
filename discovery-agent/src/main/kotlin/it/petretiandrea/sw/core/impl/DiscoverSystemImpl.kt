@@ -26,7 +26,8 @@ class DiscoverSystemImpl(
         val queryPattern = query.filter?.let { buildGraphPatternFromQuery(it) }.orEmpty().let {
             it +  """
                 ?t td:hasPropertyAffordance ?collectProperty.
-                ?collectProperty sosa:observes home:${query.collectOn.name}.
+                ?collectProperty sosa:observes ?fp.
+                ?fp a home:${query.collectOn.name}.
                 ?collectProperty td:hasForm ?form.
             """.trimIndent()
         }
@@ -45,11 +46,13 @@ class DiscoverSystemImpl(
         query.deviceType?.let { patternBuilder.appendln("?t a home:${it.name}.") }
         query.observeProperties.forEachIndexed { index, prop ->
             patternBuilder.appendln("?t td:hasPropertyAffordance ?p$index.")
-            patternBuilder.appendln("?p$index sosa:observes home:${prop.name}.")
+            patternBuilder.appendln("?p$index sosa:observes ?fp$index.")
+            patternBuilder.appendln("?fp$index a home:${prop.name}.")
         }
         query.actsProperties.forEachIndexed { index, prop ->
             patternBuilder.appendln("?t td:hasActionAffordance ?a$index.")
-            patternBuilder.appendln("?a$index sosa:observes home:${prop.name}")
+            patternBuilder.appendln("?a$index sosa:observes ?afp$index.")
+            patternBuilder.appendln("?afp$index a home:${prop.name}.")
         }
         return patternBuilder.toString()
     }

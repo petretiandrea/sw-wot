@@ -17,12 +17,12 @@ sealed class LocationType(name: String) : FeatureProperty(name) {
 
 sealed class FeatureProperty(val name: String) {
     object Temperature : FeatureProperty("Temperature")
-    object AmbientHumidity : FeatureProperty("Ambient_Humidity")
-    object AmbientTemperature : FeatureProperty("Ambient_Temperature")
+    object AmbientHumidity : FeatureProperty("AmbientHumidity")
+    object AmbientTemperature : FeatureProperty("AmbientTemperature")
 }
 
 object HomeOnto {
-    val NAMESPACE = IRIUtils.fromString("http://www.sw.org/andreapetreti/home#")
+    val NAMESPACE = IRIUtils.fromString("http://www.sw.org/andreapetreti/home-wot#")
     //private val HOME_ONTO_PATH = Source.fromResource("ontologies/home-wot.owl")?.path
     //private val WOT_NORM_PATH = Source.fromResource("ontologies/wot-normalized.owl")?.path
     private val HOME_ONTO_PATH =

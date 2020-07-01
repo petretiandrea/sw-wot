@@ -3,7 +3,7 @@
     {
       "ssn": "https://www.w3.org/ns/ssn/",
       "sosa": "http://www.w3.org/ns/sosa/",
-      "home":  "http://www.sw.org/andreapetreti/home#"
+      "home":  "http://www.sw.org/andreapetreti/home-wot#"
     }],
   "@type" : "home:Thermostat",
   "title": "ThermostatB",
@@ -17,7 +17,7 @@
   },
   "properties": {
     "roomTemperature": {
-      "sosa:observes" : {"@id": "home:Ambient_Temperature"},
+      "sosa:observes" : { "@type": "home:AmbientTemperature"},
       "description" : "The current room temperature",
       "writable": false,
       "observable": false,
@@ -28,7 +28,7 @@
       }]
     },
     "location": {
-      "sosa:observes": { "@id":  "home:GPSLocation" },
+      "sosa:observes": { "@type":  "home:GPSLocation" },
       "description": "The csss",
       "writable": false,
       "observable": false,
@@ -41,7 +41,7 @@
   },
   "actions": {
     "changeRoomTemperature" : {
-      "sosa:observes" : {"@id": "home:Ambient_Temperature"},
+      "sosa:observes" : {"@type": "home:AmbientTemperature"},
       "description": "Ciaoo",
       "forms": [{
         "href": "coaps://mylamp.example.com/status",

@@ -13,11 +13,12 @@ suspend fun main() {
 
     val discovery = DiscoverSystem.fromDirectory("localhost", 10000)
 
-    val query = thingCollectQuery {
+    val average = discovery.collectData(thingCollectQuery {
         filter {
-            observes { FeatureProperty.Temperature }
+            canSense { FeatureProperty.Temperature }
         }
         collectOn { FeatureProperty.Temperature }
-    }
-    println(discovery.collectData(query).map { it.toDouble() }.average())
+    }).map { it.toDouble() }.average()
+
+    println(average)
 }

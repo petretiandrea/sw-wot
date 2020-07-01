@@ -49,12 +49,12 @@ class ThingQueryBuilder {
         thingQuery = ThingQuery(block(), thingQuery.observeProperties, thingQuery.actsProperties)
     }
 
-    fun observes(block: FeatureProperties.() -> Unit) {
+    fun canSense(block: FeatureProperties.() -> Unit) {
         val observes = FeatureProperties().apply(block)
         thingQuery = ThingQuery(thingQuery.deviceType, observes, thingQuery.actsProperties)
     }
 
-    fun actsOn(block: FeatureProperties.() -> Unit) {
+    fun canActOn(block: FeatureProperties.() -> Unit) {
         val acts = FeatureProperties().apply(block)
         thingQuery = ThingQuery(thingQuery.deviceType, thingQuery.observeProperties, acts)
     }

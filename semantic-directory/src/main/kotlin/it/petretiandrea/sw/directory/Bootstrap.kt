@@ -2,6 +2,7 @@ package it.petretiandrea.sw.directory
 
 
 import io.vertx.core.Vertx
+import io.vertx.kotlin.core.deployVerticleAwait
 import it.petretiandrea.sw.core.utils.Source
 import it.petretiandrea.sw.directory.core.ThingDescriptionDirectory
 import it.petretiandrea.sw.directory.parsing.TDParser
@@ -11,7 +12,7 @@ import org.json.JSONObject
 
 object Bootstrap {
 
-    fun bootSemanticDirectory(vararg things: JSONObject) {
+    suspend fun bootSemanticDirectory(vararg things: JSONObject) {
         val config = JSONObject(Source.readFromResource("directory-config.json"))
         val jsonLdParser = JSONLDParserFactory.fromJson(config.getJSONObject("jsonld"))!!
 
@@ -27,6 +28,6 @@ object Bootstrap {
             port = config.getInt("port"))
 
         val vertx = Vertx.vertx()
-        vertx.deployVerticle(restVerticle)
+        vertx.deployVerticleAwait(restVerticle)
     }
 }

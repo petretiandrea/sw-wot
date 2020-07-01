@@ -28,7 +28,7 @@ class TDParserImpl(private val validator: TDValidator,
             true -> {
                 val model = ModelFactory.createDefaultModel()
                 val lifted = lifter.lift(thingDescription)
-                val id = IRIUtils.fromString(lifted.getAsString("id").getOrElse(ID.generateUnique()))
+                val id = IRIUtils.fromString(lifted.getString("id"))
                 val nQuads = jsonLdParser.toNQuads(lifted, Namespaces.HOME_SEMANTIC)
                 model.read(nQuads.reader(), Namespaces.HOME_SEMANTIC.toString(), TARGET_TYPE)
                 ThingDescriptionRDF(id, model)
