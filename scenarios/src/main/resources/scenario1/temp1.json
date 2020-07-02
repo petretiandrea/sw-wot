@@ -15,7 +15,7 @@
   },
   "properties": {
     "bodyTemp": {
-      "sosa:observes" : {"@type": "home:Temperature"},
+      "home:monitors" : {"@type": "home:Temperature"},
       "writable": false,
       "observable": false,
       "type": "string",

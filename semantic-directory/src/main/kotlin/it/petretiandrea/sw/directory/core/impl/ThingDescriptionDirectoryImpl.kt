@@ -8,11 +8,9 @@ import it.petretiandrea.sw.core.utils.IRIUtils
 import it.petretiandrea.sw.core.utils.JenaUtils
 import it.petretiandrea.sw.directory.core.ThingDescriptionDirectory
 import it.petretiandrea.sw.core.ThingDescriptionRDF
-import it.petretiandrea.sw.directory.extension.createCopy
-import it.petretiandrea.sw.directory.extension.doReadTransaction
-import it.petretiandrea.sw.directory.extension.doWriteTransaction
-import it.petretiandrea.sw.directory.extension.getInferredDataset
 import it.petretiandrea.sw.core.QueryFactory
+import it.petretiandrea.sw.directory.extension.*
+import openllet.jena.PelletReasonerFactory
 import org.apache.jena.iri.IRI
 import org.apache.jena.query.*
 import org.apache.jena.rdf.model.Model
@@ -36,7 +34,7 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
     init {
         JenaUtils.Debug.enable()
 
-        reasoner = ReasonerRegistry.getOWLReasoner() // PelletReasonerFactory.theInstance().create()
+        reasoner = PelletReasonerFactory.theInstance().create()
         aBoxDataset = TDB2Factory.createDataset().apply {
             context.set(TDB2.symUnionDefaultGraph, true)
             doWriteTransaction {
@@ -53,6 +51,7 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
         return true
     }
 
+    // todo: use .use extension for autoclose the inferreddataset
     override fun querySparql(query: String): JSONObject {
         val inferredDataset = aBoxDataset.getInferredDataset(reasoner, "urn:x-arq:UnionGraph")
         val response = inferredDataset?.doReadTransaction {
@@ -74,12 +73,13 @@ internal class ThingDescriptionDirectoryImpl : ThingDescriptionDirectory {
 
         val query = QueryFactory.createWithPrefix(queryString, Namespaces.getDefaultPrefixMapping())
 
-        val inferredDataset = aBoxDataset.getInferredDataset(reasoner, "urn:x-arq:UnionGraph")
-        val thingIds = inferredDataset?.doReadTransaction {
-            val solution = QueryExecutionFactory.create(query, it).execDescribe()
-            getThingIds(solution)
-        }
-        return retrieveThings(*thingIds.getOrElse(emptyList()).toTypedArray())
+        return aBoxDataset.getInferredDataset(reasoner, "urn:x-arq:UnionGraph")?.use {
+            val thingIds = it.doReadTransaction {
+                val solution = QueryExecutionFactory.create(query, it).execDescribe()
+                getThingIds(solution)
+            }
+            retrieveThings(*thingIds.getOrElse(emptyList()).toTypedArray())
+        }.orEmpty()
     }
 
     private fun retrieveThings(vararg thingIds: String): List<ThingDescriptionRDF> {

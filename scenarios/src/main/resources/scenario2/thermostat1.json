@@ -1,0 +1,49 @@
+{
+  "@context": ["https://www.w3.org/2019/wot/td/v1", {
+    "ssn": "https://www.w3.org/ns/ssn/",
+    "sosa": "http://www.w3.org/ns/sosa/",
+    "home":  "http://www.sw.org/andreapetreti/home-wot#"
+  }],
+  "@type" : "home:Thermostat",
+  "title": "Thermostat1",
+  "name": "Thermostat1",
+  "security": ["none"],
+  "securityDefinitions": {
+    "none": {
+      "scheme" : "nosec"
+    }
+  },
+  "properties": {
+    "temperature": {
+      "home:monitors" : {"@type": "home:AmbientTemperature"},
+      "writable": false,
+      "observable": false,
+      "type": "string",
+      "forms": [{
+        "href": "https://localhost:8082/temperature",
+        "mediaType": "application/json"
+      }]
+    },
+    "humidity": {
+      "home:monitors" : {"@type": "home:AmbientHumidity"},
+      "writable": false,
+      "observable": false,
+      "type": "string",
+      "forms": [{
+        "href": "https://localhost:8082/humidity",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "actions": {
+    "changeTemperature": {
+      "home:actOn" : {"@type": "home:AmbientTemperature"},
+      "type": "string",
+      "forms": [{
+        "href": "https://localhost:8082/temperature",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "events": {}
+}

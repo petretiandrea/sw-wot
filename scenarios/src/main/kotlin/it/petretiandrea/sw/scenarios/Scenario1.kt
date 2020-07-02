@@ -1,6 +1,6 @@
 package it.petretiandrea.sw.scenarios
 
-import it.petretiandrea.sw.core.DiscoverSystem
+import it.petretiandrea.sw.core.DiscoveryGateway
 import it.petretiandrea.sw.core.ontology.FeatureProperty
 import it.petretiandrea.sw.core.utils.Source
 import it.petretiandrea.sw.core.utils.thingCollectQuery
@@ -11,7 +11,7 @@ suspend fun main() {
     val things = Utils.loadThingsFromFolder(Source.fromResource("scenario1")!!.path)
     Bootstrap.bootSemanticDirectory(*things.toTypedArray())
 
-    val discovery = DiscoverSystem.fromDirectory("localhost", 10000)
+    val discovery = DiscoveryGateway.fromDirectory("localhost", 10000)
 
     val average = discovery.collectData(thingCollectQuery {
         filter {

@@ -2,7 +2,10 @@ package it.petretiandrea.sw.core.ontology
 
 import it.petretiandrea.sw.core.utils.IRIUtils
 import it.petretiandrea.sw.core.utils.Source
+import openllet.jena.PelletReasonerFactory
+import org.apache.jena.assembler.Mode
 import org.apache.jena.rdf.model.*
+import org.apache.jena.reasoner.Reasoner
 import java.io.File
 import java.io.Reader
 
@@ -30,18 +33,29 @@ object HomeOnto {
     private val WOT_NORM_PATH =
         "core/src/main/resources/ontologies/wot-normalized.owl"
 
+    private var cachedModel : Model? = null
+
+    private fun cacheModel(modelFunction: () -> Model): Model {
+        if(cachedModel == null)
+            cachedModel = modelFunction()
+        return cachedModel!!
+    }
 
     fun getModel(): Model {
         val homeOnto = loadModel(File(HOME_ONTO_PATH!!).reader())
         val wotOnto = loadModel(File(WOT_NORM_PATH!!).reader())
-        return ModelFactory.createDefaultModel().apply {
+        return cacheModel { ModelFactory.createDefaultModel().apply {
             //read(wotOntologyReader(), Namespaces.WOT.toString(), "TURTLE")
-            //read(Namespaces.SSN.toString())
-            //read(Namespaces.SOSA.toString())
+            read(Namespaces.SSN.toString())
+            read(Namespaces.SOSA.toString())
             add(wotOnto)
             add(homeOnto)
             setNsPrefix("td", Namespaces.WOT.toString())
-        }
+        } }
+    }
+
+    fun getReasoner(): Reasoner {
+        return PelletReasonerFactory.theInstance().create().bindFixedSchema(getModel())
     }
 
     private fun loadModel(reader: Reader) : Model {

@@ -15,6 +15,14 @@ fun Dataset.getInferredDataset(reasoner: Reasoner, namedGraph: String): Dataset?
     }
 }
 
+inline fun <R> Dataset.use(block: (Dataset) -> R) : R {
+    try {
+        return block(this);
+    } finally {
+        this.close()
+    }
+}
+
 fun <T> Dataset.doTransaction(operation: ReadWrite, map: (Dataset) -> T) : T? {
     return try {
         this.begin(operation)
