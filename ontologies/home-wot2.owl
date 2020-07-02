@@ -1,0 +1,295 @@
+@prefix : <http://www.sw.org/andreapetreti/home-wot#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.sw.org/andreapetreti/home-wot> .
+
+<http://www.sw.org/andreapetreti/home-wot> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://www.w3.org/2004/02/skos/core#note
+<http://www.w3.org/2004/02/skos/core#note> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.sw.org/andreapetreti/home-wot#actsOn
+:actsOn rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf <http://www.w3.org/ns/ssn/forProperty> ;
+        rdfs:domain <https://www.w3.org/2019/wot/td#ActionAffordance> ;
+        rdfs:range <http://www.w3.org/ns/ssn/Property> .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#hasValue
+:hasValue rdf:type owl:ObjectProperty ;
+          rdfs:domain <https://www.w3.org/2019/wot/td#InteractionAffordance> ;
+          rdfs:range :Value ;
+          rdfs:comment "Refer to a value produced by and interaction affordance." .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#monitors
+:monitors rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf <http://www.w3.org/ns/ssn/forProperty> ;
+          rdfs:domain [ rdf:type owl:Class ;
+                        owl:unionOf ( <https://www.w3.org/2019/wot/td#EventAffordance>
+                                      <https://www.w3.org/2019/wot/td#PropertyAffordance>
+                                    )
+                      ] ;
+          rdfs:range <http://www.w3.org/ns/ssn/Property> .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#value
+:value rdf:type owl:ObjectProperty ;
+       rdfs:domain rdfs:Resource ;
+       rdfs:range rdfs:Resource ;
+       rdfs:comment "Property used for represent complex strucure data." .
+
+
+###  http://www.w3.org/ns/ssn/forProperty
+<http://www.w3.org/ns/ssn/forProperty> rdf:type owl:ObjectProperty .
+
+
+###  https://www.w3.org/2019/wot/td#hasActionAffordance
+<https://www.w3.org/2019/wot/td#hasActionAffordance> rdf:type owl:ObjectProperty .
+
+
+###  https://www.w3.org/2019/wot/td#hasPropertyAffordance
+<https://www.w3.org/2019/wot/td#hasPropertyAffordance> rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.sw.org/andreapetreti/home-wot#AmbientHumidity
+:AmbientHumidity rdf:type owl:Class ;
+                 rdfs:subClassOf :Temperature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#AmbientTemperature
+:AmbientTemperature rdf:type owl:Class ;
+                    rdfs:subClassOf :Temperature ;
+                    rdfs:comment "The temperature sensed from enviroment" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Device
+:Device rdf:type owl:Class .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#DeviceTemperature
+:DeviceTemperature rdf:type owl:Class ;
+                   rdfs:subClassOf :Temperature ;
+                   rdfs:comment "Internal device temperature" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Feature
+:Feature rdf:type owl:Class ;
+         rdfs:subClassOf <http://www.w3.org/ns/ssn/Property> ;
+         rdfs:comment "Represent the feature that can be sensed or controlled using an actuation in the enviroment." .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Humidity
+:Humidity rdf:type owl:Class ;
+          rdfs:subClassOf :Feature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#HumiditySensor
+:HumiditySensor rdf:type owl:Class ;
+                rdfs:subClassOf :PhysicalDevice ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                                  owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                       owl:onProperty :monitors ;
+                                                       owl:someValuesFrom :Humidity
+                                                     ]
+                                ] .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Light
+:Light rdf:type owl:Class ;
+       rdfs:subClassOf :Feature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#LigthSwitch
+:LigthSwitch rdf:type owl:Class ;
+             rdfs:subClassOf :Switch ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
+                               owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                    owl:onProperty :actsOn ;
+                                                    owl:someValuesFrom :LuminusIntesity
+                                                  ]
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                               owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                    owl:onProperty :monitors ;
+                                                    owl:someValuesFrom :LuminusIntesity
+                                                  ]
+                             ] ;
+             rdfs:comment "Specialized switch for light, can sens and change the intesity" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Location
+:Location rdf:type owl:Class ;
+          rdfs:subClassOf :Feature ;
+          rdfs:comment "Represent a location" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#LuminusIntesity
+:LuminusIntesity rdf:type owl:Class ;
+                 rdfs:subClassOf :Light ;
+                 rdfs:comment "Represent the light intensity feature" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#OnOff
+:OnOff rdf:type owl:Class ;
+       rdfs:subClassOf :State ;
+       rdfs:comment "Represent a generic feature that can be turned on and off." .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#OpenClose
+:OpenClose rdf:type owl:Class ;
+           rdfs:subClassOf :State .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#PhysicalDevice
+:PhysicalDevice rdf:type owl:Class ;
+                rdfs:subClassOf :Device ;
+                rdfs:comment "A physical device" .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#SmartDoor
+:SmartDoor rdf:type owl:Class ;
+           rdfs:subClassOf :PhysicalDevice ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
+                             owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :actsOn ;
+                                                  owl:someValuesFrom :OpenClose
+                                                ]
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                             owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                  owl:onProperty :monitors ;
+                                                  owl:someValuesFrom :OpenClose
+                                                ]
+                           ] .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#State
+:State rdf:type owl:Class ;
+       rdfs:subClassOf :Feature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Switch
+:Switch rdf:type owl:Class ;
+        rdfs:subClassOf :PhysicalDevice ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
+                          owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                               owl:onProperty :actsOn ;
+                                               owl:someValuesFrom :OnOff
+                                             ]
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                          owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                               owl:onProperty :monitors ;
+                                               owl:someValuesFrom :OnOff
+                                             ]
+                        ] ;
+        rdfs:comment "Generic switch device. Can have two affordance, one for change the on off state, and one for read the on off state." .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Temperature
+:Temperature rdf:type owl:Class ;
+             rdfs:subClassOf :Feature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#TemperatureSensor
+:TemperatureSensor rdf:type owl:Class ;
+                   rdfs:subClassOf :PhysicalDevice ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                                     owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :monitors ;
+                                                          owl:someValuesFrom :Temperature
+                                                        ]
+                                   ] .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Thermometer
+:Thermometer rdf:type owl:Class ;
+             rdfs:subClassOf :TemperatureSensor ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                               owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                    owl:onProperty :monitors ;
+                                                    owl:someValuesFrom :AmbientTemperature
+                                                  ]
+                             ] .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Thermostat
+:Thermostat rdf:type owl:Class ;
+            rdfs:subClassOf :PhysicalDevice ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
+                              owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :actsOn ;
+                                                   owl:someValuesFrom :AmbientTemperature
+                                                 ]
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                              owl:someValuesFrom [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :monitors ;
+                                                   owl:someValuesFrom :AmbientTemperature
+                                                 ]
+                            ] .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#Value
+:Value rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :value ;
+                         owl:someValuesFrom rdfs:Resource
+                       ] ;
+       rdfs:comment "Represent a values obtained from an interaction affordance." ;
+       <http://www.w3.org/2004/02/skos/core#note> "Must be improved adding a DataSchema that represent the schema in case of complex data." .
+
+
+###  http://www.w3.org/2000/01/rdf-schema#Resource
+rdfs:Resource rdf:type owl:Class .
+
+
+###  http://www.w3.org/ns/ssn/Property
+<http://www.w3.org/ns/ssn/Property> rdf:type owl:Class .
+
+
+###  https://www.w3.org/2019/wot/td#ActionAffordance
+<https://www.w3.org/2019/wot/td#ActionAffordance> rdf:type owl:Class .
+
+
+###  https://www.w3.org/2019/wot/td#EventAffordance
+<https://www.w3.org/2019/wot/td#EventAffordance> rdf:type owl:Class .
+
+
+###  https://www.w3.org/2019/wot/td#InteractionAffordance
+<https://www.w3.org/2019/wot/td#InteractionAffordance> rdf:type owl:Class .
+
+
+###  https://www.w3.org/2019/wot/td#PropertyAffordance
+<https://www.w3.org/2019/wot/td#PropertyAffordance> rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
