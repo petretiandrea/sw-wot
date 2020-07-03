@@ -17,7 +17,6 @@ data class Value(val value: String, private val dataSchema: DataSchema) {
     fun asInteger() : Int? = value.toIntOrNull()
 }
 
-
 data class DataSchema(val type: String, val constValue: String, val format: String, val oneOf: List<String>)
 
 interface ConsumedThing {

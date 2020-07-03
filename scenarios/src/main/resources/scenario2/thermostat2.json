@@ -20,7 +20,7 @@
       "observable": false,
       "type": "number",
       "forms": [{
-        "href": "https://localhost:8082/temperature",
+        "href": "https://localhost:8083/temperature",
         "mediaType": "application/json"
       }]
     },
@@ -40,7 +40,7 @@
       "home:actOn" : {"@type": "home:AmbientTemperature"},
       "type": "number",
       "forms": [{
-        "href": "https://localhost:8082/temperature",
+        "href": "https://localhost:8083/temperature",
         "mediaType": "application/json"
       }]
     }
