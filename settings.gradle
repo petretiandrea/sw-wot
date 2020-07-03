@@ -2,5 +2,5 @@ rootProject.name = 'sw-wot'
 
 include "core"
 include "semantic-directory"
-include "discovery-agent"
+include "discovery-gateway"
 include "scenarios"
