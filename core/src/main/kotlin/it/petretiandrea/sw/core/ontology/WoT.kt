@@ -14,6 +14,10 @@ object WoT {
 
 }
 
+object JsonSchema {
+    val NAMESPACE = IRIUtils.fromString("https://www.w3.org/2019/wot/json-schema#")
+}
+
 object Hypermedia {
     val NAMESPACE = IRIUtils.fromString("https://www.w3.org/2019/wot/hypermedia#")
 

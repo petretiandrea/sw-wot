@@ -23,6 +23,7 @@
 ###  http://www.sw.org/andreapetreti/home-wot#actsOn
 :actsOn rdf:type owl:ObjectProperty ;
         rdfs:subPropertyOf <http://www.w3.org/ns/ssn/forProperty> ;
+        owl:inverseOf :isActedOnBy ;
         rdfs:domain <https://www.w3.org/2019/wot/td#ActionAffordance> ;
         rdfs:range <http://www.w3.org/ns/ssn/Property> .
 
@@ -32,6 +33,15 @@
           rdfs:domain <https://www.w3.org/2019/wot/td#InteractionAffordance> ;
           rdfs:range :Value ;
           rdfs:comment "Refer to a value produced by and interaction affordance." .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#isActedOnBy
+:isActedOnBy rdf:type owl:ObjectProperty .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#isMonitoredBy
+:isMonitoredBy rdf:type owl:ObjectProperty ;
+               owl:inverseOf :monitors .
 
 
 ###  http://www.sw.org/andreapetreti/home-wot#monitors
@@ -70,7 +80,7 @@
 
 ###  http://www.sw.org/andreapetreti/home-wot#AmbientHumidity
 :AmbientHumidity rdf:type owl:Class ;
-                 rdfs:subClassOf :Temperature .
+                 rdfs:subClassOf :Humidity .
 
 
 ###  http://www.sw.org/andreapetreti/home-wot#AmbientTemperature
@@ -105,16 +115,22 @@
                 rdfs:subClassOf :PhysicalDevice ,
                                 [ rdf:type owl:Restriction ;
                                   owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
-                                  owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                                       owl:onProperty :monitors ;
-                                                       owl:someValuesFrom :Humidity
-                                                     ]
+                                  owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onClass [ rdf:type owl:Restriction ;
+                                                owl:onProperty :monitors ;
+                                                owl:someValuesFrom :Humidity
+                                              ]
                                 ] .
 
 
 ###  http://www.sw.org/andreapetreti/home-wot#Light
 :Light rdf:type owl:Class ;
        rdfs:subClassOf :Feature .
+
+
+###  http://www.sw.org/andreapetreti/home-wot#LigthOnOff
+:LigthOnOff rdf:type owl:Class ;
+            rdfs:subClassOf :OnOff .
 
 
 ###  http://www.sw.org/andreapetreti/home-wot#LigthSwitch
@@ -133,6 +149,22 @@
                                                     owl:onProperty :monitors ;
                                                     owl:someValuesFrom :LuminusIntesity
                                                   ]
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
+                               owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass [ rdf:type owl:Restriction ;
+                                             owl:onProperty :actsOn ;
+                                             owl:someValuesFrom :LigthOnOff
+                                           ]
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
+                               owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass [ rdf:type owl:Restriction ;
+                                             owl:onProperty :monitors ;
+                                             owl:someValuesFrom :LigthOnOff
+                                           ]
                              ] ;
              rdfs:comment "Specialized switch for light, can sens and change the intesity" .
 
@@ -195,17 +227,19 @@
         rdfs:subClassOf :PhysicalDevice ,
                         [ rdf:type owl:Restriction ;
                           owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
-                          owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                               owl:onProperty :actsOn ;
-                                               owl:someValuesFrom :OnOff
-                                             ]
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass [ rdf:type owl:Restriction ;
+                                        owl:onProperty :actsOn ;
+                                        owl:someValuesFrom :OnOff
+                                      ]
                         ] ,
                         [ rdf:type owl:Restriction ;
                           owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
-                          owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                               owl:onProperty :monitors ;
-                                               owl:someValuesFrom :OnOff
-                                             ]
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass [ rdf:type owl:Restriction ;
+                                        owl:onProperty :monitors ;
+                                        owl:someValuesFrom :OnOff
+                                      ]
                         ] ;
         rdfs:comment "Generic switch device. Can have two affordance, one for change the on off state, and one for read the on off state." .
 
@@ -220,10 +254,11 @@
                    rdfs:subClassOf :PhysicalDevice ,
                                    [ rdf:type owl:Restriction ;
                                      owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
-                                     owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                                          owl:onProperty :monitors ;
-                                                          owl:someValuesFrom :Temperature
-                                                        ]
+                                     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onClass [ rdf:type owl:Restriction ;
+                                                   owl:onProperty :monitors ;
+                                                   owl:someValuesFrom :Temperature
+                                                 ]
                                    ] .
 
 
@@ -232,10 +267,11 @@
              rdfs:subClassOf :TemperatureSensor ,
                              [ rdf:type owl:Restriction ;
                                owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
-                               owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                                    owl:onProperty :monitors ;
-                                                    owl:someValuesFrom :AmbientTemperature
-                                                  ]
+                               owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass [ rdf:type owl:Restriction ;
+                                             owl:onProperty :monitors ;
+                                             owl:someValuesFrom :AmbientTemperature
+                                           ]
                              ] .
 
 
@@ -244,17 +280,19 @@
             rdfs:subClassOf :PhysicalDevice ,
                             [ rdf:type owl:Restriction ;
                               owl:onProperty <https://www.w3.org/2019/wot/td#hasActionAffordance> ;
-                              owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                                   owl:onProperty :actsOn ;
-                                                   owl:someValuesFrom :AmbientTemperature
-                                                 ]
+                              owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass [ rdf:type owl:Restriction ;
+                                            owl:onProperty :actsOn ;
+                                            owl:someValuesFrom :AmbientTemperature
+                                          ]
                             ] ,
                             [ rdf:type owl:Restriction ;
                               owl:onProperty <https://www.w3.org/2019/wot/td#hasPropertyAffordance> ;
-                              owl:someValuesFrom [ rdf:type owl:Restriction ;
-                                                   owl:onProperty :monitors ;
-                                                   owl:someValuesFrom :AmbientTemperature
-                                                 ]
+                              owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass [ rdf:type owl:Restriction ;
+                                            owl:onProperty :monitors ;
+                                            owl:someValuesFrom :AmbientTemperature
+                                          ]
                             ] .
 
 

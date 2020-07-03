@@ -18,7 +18,7 @@ suspend fun main() {
             canSense { FeatureProperty.Temperature }
         }
         collectOn { FeatureProperty.Temperature }
-    }).map { it.toDouble() }.average()
+    }).mapNotNull { it.asDouble() }.average()
 
     println(average)
 }

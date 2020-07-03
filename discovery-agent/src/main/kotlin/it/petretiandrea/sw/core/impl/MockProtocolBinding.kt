@@ -5,10 +5,10 @@ import it.petretiandrea.sw.core.Form
 import it.petretiandrea.sw.core.Value
 import kotlin.random.Random
 
-typealias GenFunction = (String) -> Value
+typealias GenFunction = (String) -> String
 
 object DefaultGenerator : GenFunction {
-    override fun invoke(name: String): Value = when {
+    override fun invoke(name: String): String = when {
         name.contains("temperature") -> Random.nextDouble(20.0, 30.0).toString()
         name.contains("bodyTemp") -> Random.nextDouble(36.0, 37.5).toString()
         name.contains("location") -> "bedroom"
@@ -17,7 +17,7 @@ object DefaultGenerator : GenFunction {
 }
 
 class MockBindingProtocolHttp(val genFunction: GenFunction) {
-    fun read(form: Form): Value? {
+    fun read(form: Form): String? {
         return try {
             println("Doing request to: ${form.href}")
             return genFunction(form.href)

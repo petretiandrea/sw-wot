@@ -5,19 +5,20 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.kotlin.ext.web.client.sendAwait
 import it.petretiandrea.sw.core.ConsumedThing
 import it.petretiandrea.sw.core.Form
+import it.petretiandrea.sw.core.Property
 import it.petretiandrea.sw.core.Value
 import kotlin.random.Random
 
 class ConsumedThingImpl(
-    override val properties: Map<String, Form>) : ConsumedThing {
+    override val properties: Map<String, Property>) : ConsumedThing {
 
     private val formClient = MockBindingProtocolHttp(DefaultGenerator) //HttpFormClient
 
     // in real implementation, need to choose the right client based on Form, using method like getClientFor
     // https://github.com/eclipse/thingweb.node-wot/blob/aab80bfa0fa15eb0aff293273f998333e8b7df28/packages/core/src/consumed-thing.ts#L200
     override suspend fun readProperty(propertyName: String): Value? {
-        return properties[propertyName]?.let {
-            formClient.read(it)
+        return properties[propertyName]?.let { prop ->
+            formClient.read(prop.forms.first())?.let { Value(it, prop.schema) }
         }
     }
 
@@ -30,7 +31,7 @@ object HttpFormClient {
     private val vertx = Vertx.vertx()
     private val web = WebClient.create(vertx)
 
-    suspend fun read(form: Form): Value? {
+    suspend fun read(form: Form): String? {
         return try {
             println("Doing request to: ${form.href}")
             web.get(form.href).sendAwait().bodyAsString()
