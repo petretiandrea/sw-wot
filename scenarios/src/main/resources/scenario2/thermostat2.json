@@ -18,7 +18,7 @@
       "home:monitors" : {"@type": "home:AmbientTemperature"},
       "writable": false,
       "observable": false,
-      "type": "string",
+      "type": "number",
       "forms": [{
         "href": "https://localhost:8082/temperature",
         "mediaType": "application/json"
@@ -28,7 +28,7 @@
       "home:monitors" : {"@type": "home:AmbientHumidity"},
       "writable": false,
       "observable": false,
-      "type": "string",
+      "type": "number",
       "forms": [{
         "href": "https://localhost:8082/humidity",
         "mediaType": "application/json"
@@ -38,7 +38,7 @@
   "actions": {
     "changeTemperature": {
       "home:actOn" : {"@type": "home:AmbientTemperature"},
-      "type": "string",
+      "type": "number",
       "forms": [{
         "href": "https://localhost:8082/temperature",
         "mediaType": "application/json"

@@ -18,7 +18,7 @@
       "home:monitors" : {"@type": "home:Temperature"},
       "writable": false,
       "observable": false,
-      "type": "string",
+      "type": "number",
       "forms": [{
         "href": "https://localhost:8081/bodyTemp",
         "mediaType": "application/json"
