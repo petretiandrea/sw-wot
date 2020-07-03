@@ -1,0 +1,30 @@
+{
+  "@context": ["https://www.w3.org/2019/wot/td/v1", {
+    "ssn": "https://www.w3.org/ns/ssn/",
+    "sosa": "http://www.w3.org/ns/sosa/",
+    "home":  "http://www.sw.org/andreapetreti/home-wot#"
+  }],
+  "@type" : "home:Thermometer",
+  "title": "Thermometer1",
+  "name": "Thermometer1",
+  "security": ["none"],
+  "securityDefinitions": {
+    "none": {
+      "scheme" : "nosec"
+    }
+  },
+  "properties": {
+    "temperature": {
+      "home:monitors" : {"@type": "home:AmbientTemperature"},
+      "writable": false,
+      "observable": false,
+      "type": "number",
+      "forms": [{
+        "href": "https://localhost:8082/temperature",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "actions": {},
+  "events": {}
+}

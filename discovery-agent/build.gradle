@@ -4,4 +4,11 @@ plugins {
 }
 
 dependencies {
+    compile project(":core")
+    implementation "io.vertx:vertx-lang-kotlin:3.9.1"
+    implementation "io.vertx:vertx-lang-kotlin-coroutines:3.9.1"
+    implementation "io.vertx:vertx-web:3.9.1"
+    implementation "io.vertx:vertx-web-client:3.9.1"
+    implementation "org.json:json:20190722"
+    implementation "org.apache.jena:apache-jena-libs:3.14.0"
 }

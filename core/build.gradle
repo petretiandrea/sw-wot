@@ -4,10 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile project(":core")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "io.vertx:vertx-lang-kotlin:3.9.1"
-    implementation "io.vertx:vertx-web:3.9.1"
     implementation "org.apache.jena:apache-jena-libs:3.14.0"
     implementation "org.json:json:20190722"
     implementation "com.github.galigator.openllet:openllet-jena:2.6.5"

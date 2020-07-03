@@ -1,0 +1,30 @@
+{
+  "@context": ["https://www.w3.org/2019/wot/td/v1", {
+      "ssn": "https://www.w3.org/ns/ssn/",
+      "sosa": "http://www.w3.org/ns/sosa/",
+      "home":  "http://www.sw.org/andreapetreti/home-wot#"
+  }],
+  "@type" : "home:TemperatureSensor",
+  "title": "Sensor1",
+  "name": "Sensor1",
+  "security": ["none"],
+  "securityDefinitions": {
+    "none": {
+      "scheme" : "nosec"
+    }
+  },
+  "properties": {
+    "bodyTemp": {
+      "home:monitors" : {"@type": "home:Temperature"},
+      "writable": false,
+      "observable": false,
+      "type": "number",
+      "forms": [{
+        "href": "https://localhost:8082/bodyTemp",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "actions": {},
+  "events": {}
+}

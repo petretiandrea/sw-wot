@@ -1,0 +1,44 @@
+{
+  "@context": ["https://www.w3.org/2019/wot/td/v1",
+    {
+      "ssn": "https://www.w3.org/ns/ssn/",
+      "sosa": "http://www.w3.org/ns/sosa/",
+      "home":  "http://www.sw.org/andreapetreti/home-wot#"
+    }],
+  "@type" : "home:Thermometer",
+  "title": "ThermometerA",
+  "id": "urn:thing:thermometer_a",
+  "name": "ThermometerA",
+  "security": ["none"],
+  "securityDefinitions": {
+    "none": {
+      "scheme" : "nosec"
+    }
+  },
+  "properties": {
+    "roomTemperature": {
+      "sosa:observes" : {"@type": "home:AmbientTemperature"},
+      "description" : "The current room temperature",
+      "writable": false,
+      "observable": false,
+      "type": "string",
+      "forms": [{
+        "href": "coaps://mylamp.example.com/status",
+        "mediaType": "application/json"
+      }]
+    },
+    "location": {
+      "sosa:observes": { "@type":  "home:GPSLocation" },
+      "description": "The csss",
+      "writable": false,
+      "observable": false,
+      "type" : "string",
+      "forms": [{
+        "href": "coaps://mylamp.example.com/status",
+        "mediaType": "application/json"
+      }]
+    }
+  },
+  "actions": {},
+  "events": {}
+}
